@@ -1,4 +1,4 @@
-package com.aluracursos.screenmatach.principal;
+package com.aluracursos.screenmatch.principal;
 
 import java.util.Arrays;
 import java.util.List;
