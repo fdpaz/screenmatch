@@ -6,50 +6,55 @@ import java.util.List;
 import java.util.OptionalDouble;
 
 @Entity
-@Table(name="series")
+@Table(name = "series")
 public class Serie {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
-
-    @Column(unique=true)
+    @Column(unique = true)
     private String titulo;
-
-    private Integer totalDeTemporadas;
+    private Integer totalTemporadas;
     private Double evaluacion;
     private String poster;
-
     @Enumerated(EnumType.STRING)
     private Categoria genero;
-
     private String actores;
     private String sinopsis;
     @OneToMany(mappedBy = "serie", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Episodio> episodios;
 
-    public Serie() {}
+    public Serie(){}
 
     public Serie(DatosSerie datosSerie){
         this.titulo = datosSerie.titulo();
-        this.totalDeTemporadas = datosSerie.totalDeTemporadas();
-        this.evaluacion = OptionalDouble.of(datosSerie.evaluacion()).orElse(0);
+        this.totalTemporadas = datosSerie.totalTemporadas();
+        this.evaluacion = OptionalDouble.of(Double.valueOf(datosSerie.evaluacion())).orElse(0);
         this.poster = datosSerie.poster();
         this.genero = Categoria.fromString(datosSerie.genero().split(",")[0].trim());
         this.actores = datosSerie.actores();
         this.sinopsis = datosSerie.sinopsis();
-
     }
+
     @Override
     public String toString() {
-        return
-                 "genero=" + genero +
-                 "titulo='" + titulo + '\'' +
-                 ", totalDeTemporadas=" + totalDeTemporadas +
-                 ", evaluacion=" + evaluacion +
-                 ", poster='" + poster + '\'' +
-                 ", actores='" + actores + '\'' +
-                 ", sinopsis='" + sinopsis + '\''+
-                 ", episodios='" + episodios + '\'';
+        return  "genero=" + genero +
+                "titulo='" + titulo + '\'' +
+                ", totalTemporadas=" + totalTemporadas +
+                ", evaluacion=" + evaluacion +
+                ", poster='" + poster + '\'' +
+                ", actores='" + actores + '\'' +
+                ", sinopsis='" + sinopsis + '\'' +
+                ", episodios='" + episodios + '\'';
+
+    }
+
+    public List<Episodio> getEpisodios() {
+        return episodios;
+    }
+
+    public void setEpisodios(List<Episodio> episodios) {
+        episodios.forEach(e -> e.setSerie(this));
+        this.episodios = episodios;
     }
 
     public Long getId() {
@@ -68,12 +73,12 @@ public class Serie {
         this.titulo = titulo;
     }
 
-    public Integer getTotalDeTemporadas() {
-        return totalDeTemporadas;
+    public Integer getTotalTemporadas() {
+        return totalTemporadas;
     }
 
-    public void setTotalDeTemporadas(Integer totalDeTemporadas) {
-        this.totalDeTemporadas = totalDeTemporadas;
+    public void setTotalTemporadas(Integer totalTemporadas) {
+        this.totalTemporadas = totalTemporadas;
     }
 
     public Double getEvaluacion() {
@@ -114,15 +119,5 @@ public class Serie {
 
     public void setSinopsis(String sinopsis) {
         this.sinopsis = sinopsis;
-    }
-
-
-    public void setEpisodios(List<Episodio> episodios) {
-        episodios.forEach(e-> e.setSerie(this));
-        this.episodios = episodios;
-    }
-
-    public List<Episodio> getEpisodios() {
-        return episodios;
     }
 }
